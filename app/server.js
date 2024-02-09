@@ -1,6 +1,6 @@
 const express = require('express');
 const fs = require('fs');
-const { CONFIG } = require('../config');
+const { CONFIG } = require('./config');
 const Keyv = require('keyv');
 
 const app = express();

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const keyv = require('../server'); // Import the Keyv instance directly
 
-const { CONFIG } = require('../config');
+const { CONFIG } = require('./config');
 
 // Define saved routes
 router.get('/', async (req, res) => {
