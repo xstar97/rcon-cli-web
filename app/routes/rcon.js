@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const YAML = require('yaml');
-const { CONFIG, COMMANDS } = require('./config');
+const { CONFIG, COMMANDS } = require('../config');
 const { spawn } = require('child_process');
 
 const defaultServer = CONFIG.CLI_DEFAULT_SERVER;

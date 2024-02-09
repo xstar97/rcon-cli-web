@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const YAML = require('yaml');
-const { CONFIG } = require('./config');
+const { CONFIG } = require('../config');
 
 let defaultServer = CONFIG.CLI_DEFAULT_SERVER;
 let configFile = CONFIG.CLI_CONFIG;
