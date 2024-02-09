@@ -8,8 +8,7 @@ WORKDIR /config
 RUN apk add --no-cache curl tar
 
 # Download the latest release of rcon-cli
-RUN latest_release=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
-    curl -L -o /tmp/rcon.tar.gz "$latest_release"
+RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4)
 
 # Extract rcon binary and rcon.yaml configuration file
 RUN tar -xzf /tmp/rcon.tar.gz -C /tmp && \
