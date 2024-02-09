@@ -2,7 +2,7 @@
 FROM node:alpine3.19@sha256:a4846d0aac29ceb77a633edcbc56260231fe6f0ba3aeca1ed8f3085a26c54f8e
 
 # Set the working directory inside the container
-WORKDIR /config
+WORKDIR /src/app
 
 # Install curl and tar
 RUN apk add --no-cache curl tar
@@ -14,10 +14,9 @@ RUN mkdir -p /config /rcon
 RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4)
 
 # Extract rcon binary and rcon.yaml configuration file
-RUN tar -xzf /tmp/rcon.tar.gz -C /tmp && \
-    mv /tmp/rcon-*-amd64_linux/rcon /rcon && \
-    mv /tmp/rcon-*-amd64_linux/rcon.yaml /rcon && \
-    rm -rf /tmp/rcon-*
+RUN tar -xzf /tmp/rcon.tar.gz -C /rcon && \
+    mv /rcon/rcon-*/* /rcon && \
+    rm -rf /rcon/rcon-*
 
 # Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
@@ -25,7 +24,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install --production
 
-# Copy the rest of the application code from app directory to /config
+# Copy the rest of the application code from app directory to /src/app
 COPY app .
 
 # Set environment variable for port (default to 3000 if not provided)
