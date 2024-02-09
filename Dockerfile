@@ -21,11 +21,11 @@ RUN tar -xzf /tmp/rcon.tar.gz -C /rcon && \
 # Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
 
+# Copy the rest of the application code from app directory to /src/app
+COPY app/* .
+
 # Install dependencies
 RUN npm install --production
-
-# Copy the rest of the application code from app directory to /src/app
-COPY app .
 
 # Set environment variable for port (default to 3000 if not provided)
 ENV PORT=3000

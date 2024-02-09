@@ -34,7 +34,7 @@ const CONFIG = {
     //redis pass
     REDIS_PASS: process.env.REDIS_PASS,
     //sqlite
-    SQLITE_DB:`${path.join(process.env.SQLITE_DB || "sqlite.db")}`
+    SQLITE_DB:`${path.join(process.env.SQLITE_DB || "/config/sqlite.db")}`
 };
 
 const COMMANDS = {
