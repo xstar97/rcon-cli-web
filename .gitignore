@@ -4,3 +4,4 @@ rcon.exe
 app/node_modules
 rcon.yaml
 logs/*
+app/sqlite.db

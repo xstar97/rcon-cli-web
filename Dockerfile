@@ -24,6 +24,9 @@ COPY package*.json ./
 # Copy the rest of the application code from app directory to /src/app
 COPY app/* .
 
+# Log the files in the /src/app directory
+RUN ls -la /src/app
+
 # Install dependencies
 RUN npm install --production
 
