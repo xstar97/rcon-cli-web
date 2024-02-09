@@ -7,6 +7,9 @@ WORKDIR /config
 # Install curl and tar
 RUN apk add --no-cache curl tar
 
+# Create directories for volumes
+RUN mkdir -p /config /rcon
+
 # Download the latest release of rcon-cli
 RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4)
 
@@ -15,9 +18,6 @@ RUN tar -xzf /tmp/rcon.tar.gz -C /tmp && \
     mv /tmp/rcon-*-amd64_linux/rcon /rcon && \
     mv /tmp/rcon-*-amd64_linux/rcon.yaml /rcon && \
     rm -rf /tmp/rcon-*
-
-# Create directories for volumes
-RUN mkdir /rcon
 
 # Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
