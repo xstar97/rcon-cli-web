@@ -1,0 +1,216 @@
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    position: relative;
+}
+
+/* Container styles */
+#container {
+    width: 600px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    margin: 0 auto; /* Add this line to center the container horizontally */
+}
+
+#rconOutput {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#inputContainer {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#commandInput {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#submitBtn {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Dark mode styles */
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark-mode #container {
+    background-color: #444;
+    color: #fff;
+}
+
+.dark-mode #rconOutput {
+    border-color: #666;
+}
+
+.dark-mode #inputContainer {
+    background-color: #444;
+}
+
+.dark-mode #commandInput {
+    background-color: #555;
+    color: #fff;
+    border-color: #666;
+}
+
+.dark-mode #submitBtn {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Servers selector styles */
+#servers {
+    margin: 10px auto; /* Center the selector horizontally */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: calc(50% - 15px); /* Adjust width as needed */
+    box-sizing: border-box; /* Ensure padding is included in width */
+    width: 100%; /* Make the selector match the width of the rconOutput */
+}
+
+/* Light mode styles */
+#servers {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Dark mode styles */
+.dark-mode #servers {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Toggle mode button styles */
+#toggleModeBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* Dark mode button styles */
+.dark-mode #toggleModeBtn {
+    background-color: #555;
+    color: #fff;
+}
+
+/* View Logs button styles */
+#viewLogsBtn {
+    margin: 10px auto; /* Center the button horizontally */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: calc(50% - 15px); /* Adjust width as needed */
+    box-sizing: border-box; /* Ensure padding is included in width */
+    cursor: pointer;
+    width: 100%; /* Make the button match the width of the rconOutput */
+}
+
+/* Light mode styles */
+#viewLogsBtn {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Dark mode styles */
+.dark-mode #viewLogsBtn {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Logs dialog styles */
+#logsDialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+}
+
+#logsDialogContent {
+    text-align: center;
+}
+
+#logsTextArea {
+    width: 400px;
+    height: 300px;
+    margin-bottom: 10px;
+}
+
+#logsButtons {
+    margin-top: 10px;
+}
+
+#logsButtons button {
+    padding: 8px 16px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#logsButtons button:hover {
+    background-color: #0056b3;
+}
+
+/* Light mode styles */
+#logsDialog, #logsButtons button {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Dark mode styles */
+.dark-mode #logsDialog, .dark-mode #logsButtons button {
+    background-color: #333;
+    color: #fff;
+}
+/* Cli version styles */
+#cli-version {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Dark mode styles */
+.dark-mode #cli-version {
+    color: #ccc;
+}

@@ -1,0 +1,6 @@
+.env
+development.env
+rcon.exe
+nodes_modules
+rcon.yaml
+logs/*
