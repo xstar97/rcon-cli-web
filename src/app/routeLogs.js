@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { readLogFile, getLogsFromConfig,defaultServer } = require('../logic/logs');
+const { readLogFile, getLogsFromConfig,defaultServer } = require('./logicLogs');
 
 // Define logs route
 router.get('/:server', async (req, res) => {

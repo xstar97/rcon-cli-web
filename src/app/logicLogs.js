@@ -1,6 +1,6 @@
 const fs = require('fs');
 const YAML = require('yaml');
-const { CONFIG } = require('../config');
+const { CONFIG } = require('./config');
 
 let configFile = CONFIG.CLI_CONFIG;
 let defaultServer = CONFIG.CLI_DEFAULT_SERVER;

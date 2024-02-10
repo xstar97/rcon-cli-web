@@ -1,5 +1,5 @@
-const keyv = require('../server.js'); // Import the Keyv instance directly
-const { CONFIG } = require('../config.js');
+const keyv = require('./server.js'); // Import the Keyv instance directly
+const { CONFIG } = require('./config.js');
 
 const defaultServer = CONFIG.CLI_DEFAULT_SERVER;
 const defaultMode = CONFIG.MODE;

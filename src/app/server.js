@@ -3,18 +3,6 @@ const fs = require('fs');
 const { CONFIG } = require('./config');
 const Keyv = require('keyv');
 
-const app = express();
-
-let rconCliPath = CONFIG.CLI_ROOT;
-
-// Validate if rconCliPath exists
-if (!fs.existsSync(rconCliPath)) {
-    console.error(`Error: rconCliPath '${rconCliPath}' does not exist.`);
-    process.exit(1); // Exit the process with an error code
-}
-console.log(`rcon: ${rconCliPath}`);
-app.use(express.json()); // Parse JSON bodies
-
 // Determine the storage adapter based on the DB_TYPE
 let storageAdapter;
 if (CONFIG.DB_TYPE === "sqlite") {
@@ -35,10 +23,22 @@ keyv.on('error', err => console.error('Keyv Connection Error', err));
 module.exports = keyv;
 
 // Import route files after exporting the Keyv instance
-const indexRoute = require('./routes/index');
-const rconRoutes = require('./routes/rcon');
-const logsRoutes = require('./routes/logs');
-const savedRoutes = require('./routes/saved');
+const indexRoute = require('./routeIndex');
+const rconRoutes = require('./routeRcon');
+const logsRoutes = require('./routeLogs');
+const savedRoutes = require('./routeSaved');
+
+const app = express();
+
+let rconCliPath = CONFIG.CLI_ROOT;
+
+// Validate if rconCliPath exists
+if (!fs.existsSync(rconCliPath)) {
+    console.error(`Error: rconCliPath '${rconCliPath}' does not exist.`);
+    process.exit(1); // Exit the process with an error code
+}
+console.log(`rcon: ${rconCliPath}`);
+app.use(express.json()); // Parse JSON bodies
 
 // Use route middleware
 app.use('/', indexRoute); // Use the index route for serving static files

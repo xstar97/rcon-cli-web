@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getSavedData, getSavedValueByKey, saveData } = require('../logic/saved.js');
+const { getSavedData, getSavedValueByKey, saveData } = require('./logicSaved.js');
 
 // Define saved routes
 router.get('/', async (req, res) => {

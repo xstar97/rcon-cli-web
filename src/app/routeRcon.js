@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getServersFromConfig, sendToCLI, checkAndUpdateVersion } = require('../logic/rcon.js');
+const { getServersFromConfig, sendToCLI, checkAndUpdateVersion } = require('./logicRcon.js');
 
 // Servers route
 router.get('/servers', (req, res) => {

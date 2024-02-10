@@ -18,9 +18,9 @@ const CONFIG = {
     //dark/light
     MODE: process.env.MODE || "dark",
     //Root path to rcon file
-    CLI_ROOT: path.join(process.env.CLI_ROOT || "/rcon/rcon"),
+    CLI_ROOT: path.join(process.env.CLI_ROOT || "/src/app/rcon/rcon"),
     //Root path to rcon.yaml
-    CLI_CONFIG: path.join(process.env.CLI_CONFIG || "/rcon/rcon.yaml"),
+    CLI_CONFIG: path.join(process.env.CLI_CONFIG || "/src/app/rcon/rcon.yaml"),
     //Default rcon env
     CLI_DEFAULT_SERVER: process.env.CLI_DEFAULT_SERVER || "default",
     //sqlite | redis

@@ -3,7 +3,7 @@ const YAML = require('yaml');
 const { spawn } = require('child_process');
 const path = require('path');
 const fetch = require('node-fetch');
-const { CONFIG, COMMANDS } = require('../config');
+const { CONFIG, COMMANDS } = require('./config');
 
 const defaultServer = CONFIG.CLI_DEFAULT_SERVER;
 const configFile = CONFIG.CLI_CONFIG;
