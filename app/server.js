@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const { CONFIG } = require('./config');
 const Keyv = require('keyv');
+const path = require('path'); // Import the 'path' module
 
 const app = express();
 
@@ -38,10 +39,11 @@ module.exports = keyv;
 const savedRoutes = require('./saved');
 const rconRoutes = require('./rcon');
 const logsRoutes = require('./logs');
-const indexRoute = require('./index');
 
-// Use route middleware
-app.use('/', indexRoute); // Use the index route for serving static files
+// Serve static files from the 'public' directory for the '/' route
+app.use(express.static(path.join(__dirname, "public")));
+
+// Use route middleware for other routes
 app.use('/logs', logsRoutes);
 app.use('/rcon', rconRoutes);
 app.use('/saved', savedRoutes);
