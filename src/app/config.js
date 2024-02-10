@@ -18,9 +18,9 @@ const CONFIG = {
     //dark/light
     MODE: process.env.MODE || "dark",
     //Root path to rcon file
-    CLI_ROOT: path.join(process.env.CLI_ROOT || "/src/app/rcon/rcon"),
+    CLI_ROOT: path.join(process.env.CLI_ROOT || "/home/kah/app/rcon/rcon"),
     //Root path to rcon.yaml
-    CLI_CONFIG: path.join(process.env.CLI_CONFIG || "/src/app/rcon/rcon.yaml"),
+    CLI_CONFIG: path.join(process.env.CLI_CONFIG || "/config/rcon.yaml"),
     //Default rcon env
     CLI_DEFAULT_SERVER: process.env.CLI_DEFAULT_SERVER || "default",
     //sqlite | redis
@@ -28,13 +28,13 @@ const CONFIG = {
     //redis host
     REDIS_HOST: process.env.REDIS_HOST, 
     //redis port
-    REDIS_PORT: process.env.REDIS_PORT,
+    REDIS_PORT: process.env.REDIS_PORT || 6379,
     //redis user
-    REDIS_USER: process.env.REDIS_USER,
+    REDIS_USER: process.env.REDIS_USER || "default",
     //redis pass
     REDIS_PASS: process.env.REDIS_PASS,
     //sqlite
-    SQLITE_DB:`${path.join(process.env.SQLITE_DB || "/config/sqlite.db")}`
+    SQLITE_DB:`${path.join(process.env.SQLITE_DB || "/config/db/sqlite.db")}`
 };
 
 const COMMANDS = {
