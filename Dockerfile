@@ -45,7 +45,7 @@ RUN addgroup -S kah && adduser -S kah -G kah
 
 # Set permissions for the .npm directory
 RUN mkdir -p /.npm && \
-    chown -R kah:kah /.npm
+    chown -R root:root /.npm
 
 # Switch to the newly created user
 USER kah
