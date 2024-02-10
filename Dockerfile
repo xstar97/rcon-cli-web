@@ -17,15 +17,16 @@ ENV PORT=3000 \
 # Install curl and tar
 RUN apk add --no-cache curl tar
 
+# Create directories if they don't exist and set permissions
+RUN mkdir -p /config /home/kah/app/rcon && \
+    chown -R kah:kah /config /home/kah/app/rcon /.npm
+
 # Copy the application code with preserving directories
 COPY src/app/public /home/kah/app/public
 COPY src/app/routes /home/kah/app/routes
 COPY src/app/logic /home/kah/app/logic
 COPY src/app/*.js /home/kah/app/
 COPY src/app/package*.json /home/kah/app/
-
-# Create directories if they dont exist.
-RUN mkdir -p /config /home/kah/app/rcon
 
 # Download the latest release of rcon-cli
 RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4)
@@ -34,21 +35,14 @@ RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rc
 RUN tar -xzf /tmp/rcon.tar.gz -C /home/kah/app/rcon --strip-components=1 && \
     rm /tmp/rcon.tar.gz
 
+# Switch to the newly created user
+USER kah
+
 # Install dependencies
 RUN npm install --production
 
 # Expose the port defined in the environment variable
 EXPOSE $PORT
-
-# Create a new user and group
-RUN addgroup -S kah && adduser -S kah -G kah
-
-# Set permissions for the .npm directory
-RUN mkdir -p /.npm && \
-    chown -R kah:kah /.npm
-
-# Switch to the newly created user
-USER kah
 
 # Define volumes
 VOLUME ["/config"]
