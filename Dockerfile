@@ -21,14 +21,11 @@ RUN tar -xzf /tmp/rcon.tar.gz -C /rcon && \
     mv /rcon/rcon-*/* /rcon && \
     rm -rf /rcon/rcon-*
 
-# Copy package.json and package-lock.json to install dependencies
-COPY package*.json ./
+# Copy the rest of the application code from app directory to /src/app
+COPY src/app/* /src/app/
 
 # Install dependencies
 RUN npm install --production
-
-# Copy the rest of the application code from app directory to /src/app
-COPY src/app/* /src/app/
 
 # Validate that files were copied successfully
 RUN ls -al /src/app/
