@@ -37,9 +37,6 @@ RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rc
 RUN tar -xzf /tmp/rcon.tar.gz -C /src/app/rcon --strip-components=1 && \
     rm /tmp/rcon.tar.gz
 
-# Check if CLI_CONFIG exists and copy rcon.yaml to /config if it doesn't
-RUN if [ ! -f "$CLI_CONFIG" ]; then cp $CLI_CONFIG /config/; fi
-
 # Install dependencies
 RUN npm install --production
 
