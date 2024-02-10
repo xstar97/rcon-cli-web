@@ -61,3 +61,7 @@ VOLUME ["/config"]
 
 # Run the Node.js application using `npm start` script
 CMD ["npm", "start"]
+
+# Health check
+HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=6 \
+    CMD curl -fs http://localhost:$PORT/ || exit 1
