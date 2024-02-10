@@ -4,6 +4,16 @@ FROM node:21.6.1-alpine3.19@sha256:a4846d0aac29ceb77a633edcbc56260231fe6f0ba3aec
 # Set the working directory inside the container
 WORKDIR /src/app
 
+# Set environment variables
+ENV PORT=3000 \
+    NODE_ENV=production \
+    MODE=dark \
+    CLI_ROOT=/src/app/rcon/rcon \
+    CLI_CONFIG=/config/rcon.yaml \
+    CLI_DEFAULT_SERVER=default \
+    DB_TYPE=sqlite \
+    SQLITE_DB=/config/rcon.sqlite
+
 # Install curl and tar
 RUN apk add --no-cache curl tar
 
@@ -13,32 +23,25 @@ RUN mkdir -p /config /src/app/rcon
 # Set permissions for the /rcon and /config directories
 RUN chmod -R 755 /src/app/rcon /config
 
+# Copy the application code with preserving directories
+COPY src/app/public /src/app/public
+COPY src/app/routes /src/app/routes
+COPY src/app/logic /src/app/logic
+COPY src/app/*.js /src/app/
+COPY src/app/package*.json /src/app/
+
 # Download the latest release of rcon-cli
 RUN curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4)
 
 # Extract rcon binary and rcon.yaml configuration file
-RUN tar -xzf /tmp/rcon.tar.gz -C /src/app/rcon && \
-    mv /src/app/rcon/rcon-*/* /src/app/rcon && \
-    rm -rf /src/app/rcon/rcon-*
+RUN tar -xzf /tmp/rcon.tar.gz -C /src/app/rcon --strip-components=1 && \
+    rm /tmp/rcon.tar.gz
 
-# Copy the rest of the application code from app directory to /src/app
-COPY src/app/* /src/app/
+# Check if CLI_CONFIG exists and copy rcon.yaml to /config if it doesn't
+RUN if [ ! -f "$CLI_CONFIG" ]; then cp $CLI_CONFIG /config/; fi
 
 # Install dependencies
 RUN npm install --production
-
-# Validate that files were copied successfully
-RUN ls -al /src/app/
-
-# Set environment variables
-ENV PORT=3000 \
-    NODE_ENV=production \
-    MODE=dark \
-    CLI_ROOT=/src/app/rcon \
-    CLI_CONFIG=/src/app/rcon/rcon.yaml \
-    CLI_DEFAULT_SERVER=default \
-    DB_TYPE=sqlite \
-    SQLITE_DB=/config/rcon.sqlite
 
 # Expose the port defined in the environment variable
 EXPOSE $PORT

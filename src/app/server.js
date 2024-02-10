@@ -23,10 +23,10 @@ keyv.on('error', err => console.error('Keyv Connection Error', err));
 module.exports = keyv;
 
 // Import route files after exporting the Keyv instance
-const indexRoute = require('./routeIndex');
-const rconRoutes = require('./routeRcon');
-const logsRoutes = require('./routeLogs');
-const savedRoutes = require('./routeSaved');
+const indexRoute = require('./routes/routeIndex');
+const rconRoutes = require('./routes/routeRcon');
+const logsRoutes = require('./routes/routeLogs');
+const savedRoutes = require('./routes/routeSaved');
 
 const app = express();
 

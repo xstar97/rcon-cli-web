@@ -3,7 +3,7 @@ const YAML = require('yaml');
 const { spawn } = require('child_process');
 const path = require('path');
 const express = require('express');
-const { CONFIG, COMMANDS } = require('./config');
+const { CONFIG, COMMANDS } = require('../config');
 const axios = require('axios').default;
 
 const defaultServer = CONFIG.CLI_DEFAULT_SERVER;
