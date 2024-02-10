@@ -1,5 +1,5 @@
 # Use a lightweight Node.js image as base
-FROM node:21.6.1-alpine3.19@sha256:a4846d0aac29ceb77a633edcbc56260231fe6f0ba3aeca1ed8f3085a26c54f8e
+FROM node:20.11.0-alpine3.19@sha256:9b61ed13fef9ca689326f40c0c0b4da70e37a18712f200b4c66d3b44fd59d98e
 
 # Set the working directory inside the container
 WORKDIR /home/kah/app
