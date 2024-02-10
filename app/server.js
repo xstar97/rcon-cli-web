@@ -35,10 +35,10 @@ keyv.on('error', err => console.error('Keyv Connection Error', err));
 module.exports = keyv;
 
 // Import route files after exporting the Keyv instance
-const indexRoute = require('./routes/index');
+const savedRoutes = require('./routes/saved');
 const rconRoutes = require('./routes/rcon');
 const logsRoutes = require('./routes/logs');
-const savedRoutes = require('./routes/saved');
+const indexRoute = require('./routes/index');
 
 // Use route middleware
 app.use('/', indexRoute); // Use the index route for serving static files
