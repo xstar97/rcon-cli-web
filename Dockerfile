@@ -24,9 +24,6 @@ COPY package*.json ./
 # Copy the rest of the application code from app directory to /src/app
 COPY app/* /src/app/
 
-# Copy routes directory
-COPY app/routes/* /src/app/routes
-
 # Validate that files were copied successfully
 RUN ls -al /src/app/
 
