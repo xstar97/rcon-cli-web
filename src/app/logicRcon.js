@@ -2,8 +2,8 @@ const fs = require('fs');
 const YAML = require('yaml');
 const { spawn } = require('child_process');
 const path = require('path');
-const fetch = require('node-fetch');
 const { CONFIG, COMMANDS } = require('./config');
+const http = require('http');
 
 const defaultServer = CONFIG.CLI_DEFAULT_SERVER;
 const configFile = CONFIG.CLI_CONFIG;
@@ -59,19 +59,41 @@ async function sendToCLI(server, command) {
 
 async function checkAndUpdateVersion() {
     try {
-        const response = await fetch('https://api.github.com/repos/gorcon/rcon-cli/releases/latest');
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        const latestVersion = data.tag_name.substring(1); // Remove 'v' prefix
+        const options = {
+            hostname: 'api.github.com',
+            path: '/repos/gorcon/rcon-cli/releases/latest',
+            method: 'GET',
+            headers: {
+                'User-Agent': 'nodejs' // GitHub requires a User-Agent header
+            }
+        };
 
-        const currentVersionResponse = await sendToCLI(defaultServer, cliOptVersion);
-        const currentVersion = currentVersionResponse.split(' ')[2].trim();
+        const req = http.request(options, res => {
+            let data = '';
+            res.on('data', chunk => {
+                data += chunk;
+            });
+            res.on('end', () => {
+                const latestVersion = JSON.parse(data).tag_name.substring(1); // Remove 'v' prefix
+                sendToCLI(defaultServer, cliOptVersion)
+                    .then(currentVersionResponse => {
+                        const currentVersion = currentVersionResponse.split(' ')[2].trim();
+                        const updateAvailable = latestVersion !== currentVersion;
+                        return { latestVersion, currentVersion, updateAvailable };
+                    })
+                    .catch(error => {
+                        console.error('Error sending command:', error);
+                        return { error: 'Error sending command' };
+                    });
+            });
+        });
 
-        const updateAvailable = latestVersion !== currentVersion;
+        req.on('error', error => {
+            console.error('Error making HTTP request:', error);
+            return { error: 'Error making HTTP request' };
+        });
 
-        return { latestVersion, currentVersion, updateAvailable };
+        req.end();
     } catch (error) {
         console.error('Error checking or updating version:', error);
         return { error: 'Error checking or updating version' };
