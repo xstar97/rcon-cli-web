@@ -1,7 +1,10 @@
 .env
 development.env
+
 rcon.exe
-app/node_modules
+rcon
 rcon.yaml
-logs/*
-app/sqlite.db
+
+src/app/node_modules
+src/app/logs/*
+src/app/rcon-dev.sqlite

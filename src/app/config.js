@@ -8,7 +8,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (process.env.NODE_ENV === 'production') {
     dotenv.config();
 } else {
-    dotenv.config({ path: path.resolve(__dirname, 'development.env') });
+    dotenv.config({ path: path.resolve(__dirname, '../../development.env') });
 }
 
 // Configuration constants
@@ -17,7 +17,7 @@ const CONFIG = {
     PORT: process.env.PORT || 3000,
     //dark/light
     MODE: process.env.MODE || "dark",
-    //Root path to rcon-cli file
+    //Root path to rcon file
     CLI_ROOT: path.join(process.env.CLI_ROOT || "/rcon/rcon"),
     //Root path to rcon.yaml
     CLI_CONFIG: path.join(process.env.CLI_CONFIG || "/rcon/rcon.yaml"),

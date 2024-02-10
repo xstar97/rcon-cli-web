@@ -2,7 +2,6 @@ const express = require('express');
 const fs = require('fs');
 const { CONFIG } = require('./config');
 const Keyv = require('keyv');
-const path = require('path'); // Import the 'path' module
 
 const app = express();
 
@@ -13,7 +12,7 @@ if (!fs.existsSync(rconCliPath)) {
     console.error(`Error: rconCliPath '${rconCliPath}' does not exist.`);
     process.exit(1); // Exit the process with an error code
 }
-
+console.log(`rcon: ${rconCliPath}`);
 app.use(express.json()); // Parse JSON bodies
 
 // Determine the storage adapter based on the DB_TYPE
@@ -36,14 +35,13 @@ keyv.on('error', err => console.error('Keyv Connection Error', err));
 module.exports = keyv;
 
 // Import route files after exporting the Keyv instance
-const savedRoutes = require('./saved');
-const rconRoutes = require('./rcon');
-const logsRoutes = require('./logs');
+const indexRoute = require('./routes/index');
+const rconRoutes = require('./routes/rcon');
+const logsRoutes = require('./routes/logs');
+const savedRoutes = require('./routes/saved');
 
-// Serve static files from the 'public' directory for the '/' route
-app.use(express.static(path.join(__dirname, "public")));
-
-// Use route middleware for other routes
+// Use route middleware
+app.use('/', indexRoute); // Use the index route for serving static files
 app.use('/logs', logsRoutes);
 app.use('/rcon', rconRoutes);
 app.use('/saved', savedRoutes);

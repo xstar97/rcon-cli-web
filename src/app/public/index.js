@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 const versionElement = document.getElementById("cli-version");
-                versionElement.textContent = `cli-version: ${data.version}`;
+                versionElement.textContent = `cli-version: ${data.currentVersion}`;
             })
             .catch(error => console.error("Error fetching version:", error));
     }
