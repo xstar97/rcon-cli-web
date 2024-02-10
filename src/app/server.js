@@ -31,13 +31,14 @@ const savedRoutes = require('./routes/routeSaved');
 const app = express();
 
 let rconCliPath = CONFIG.CLI_ROOT;
+let rconCliConfig= CONFIG.CLI_CONFIG;
 
 // Validate if rconCliPath exists
 if (!fs.existsSync(rconCliPath)) {
     console.error(`Error: rconCliPath '${rconCliPath}' does not exist.`);
     process.exit(1); // Exit the process with an error code
 }
-console.log(`rcon: ${rconCliPath}`);
+console.log(`rcon: ${rconCliPath}\nconfig: ${rconCliConfig}`);
 app.use(express.json()); // Parse JSON bodies
 
 // Use route middleware
