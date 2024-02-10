@@ -1,5 +1,5 @@
 # Use a lightweight Node.js image as base
-FROM node:alpine3.19@sha256:a4846d0aac29ceb77a633edcbc56260231fe6f0ba3aeca1ed8f3085a26c54f8e
+FROM node:21.6.1-alpine3.19@sha256:a4846d0aac29ceb77a633edcbc56260231fe6f0ba3aeca1ed8f3085a26c54f8e
 
 # Set the working directory inside the container
 WORKDIR /src/app
