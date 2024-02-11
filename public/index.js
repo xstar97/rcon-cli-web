@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     serversSelect.addEventListener("change", function() {
         currentServer = this.value;
-        updateSavedData();
+        updateSavedData({"server": currentServer,"mode": currentMode});
         clearOutput();
     });
 
@@ -148,17 +148,17 @@ document.addEventListener("DOMContentLoaded", function() {
         body.classList.toggle("dark-mode");
         toggleModeBtn.classList.toggle("dark-mode-btn");
         currentMode = body.classList.contains("dark-mode") ? "dark" : "light";
-        updateSavedData();
+        updateSavedData({"server": currentServer,"mode": currentMode});
     });
 
     // Function to update saved data
-    function updateSavedData() {
+    function updateSavedData(data) {
         fetch(SAVED_DATA_ROUTE, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ server: currentServer, mode: currentMode })
+            body: data
         })
         .then(response => {
             if (!response.ok) {

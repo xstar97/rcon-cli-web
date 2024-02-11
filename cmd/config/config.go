@@ -16,7 +16,7 @@ var ROUTES = struct {
     RCON_SERVERS: "/rcon/servers",
     RCON_VERSION: "/rcon/version",
     LOGS:         "/logs/",
-    SAVED:        "/saved",
+    SAVED:        "/saved/",
 }
 
 // Constants for commands
