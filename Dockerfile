@@ -44,7 +44,7 @@ COPY public/index.js /app/public/index.js
 COPY public/styles.css /app/public/styles.css
 
 # Create the necessary directories
-RUN mkdir -p /app/rcon
+RUN mkdir -p /app/rcon /config
 
 # Download the latest release of rcon-cli
 RUN apk add --no-cache curl tar \
