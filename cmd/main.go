@@ -12,15 +12,6 @@ import (
 )
 
 func main() {
-    // Check if the public directory exists
-    if _, err := os.Stat(config.CONFIG.PUBLIC_DIR); os.IsNotExist(err) {
-        log.Fatalf("The %s directory does not exist", config.CONFIG.PUBLIC_DIR)
-    }
-
-    // Serve files from the public directory
-    fs := http.FileServer(http.Dir(config.CONFIG.PUBLIC_DIR))
-    http.Handle("/", fs)
-
     // Use the PORT constant from config
     port := fmt.Sprintf(":%s", config.CONFIG.PORT)
     rcon := config.ROUTES.RCON
@@ -28,6 +19,9 @@ func main() {
     rconVersion := config.ROUTES.RCON_VERSION
     logs := config.ROUTES.LOGS
     saved := config.ROUTES.SAVED
+
+    // Initialize the index route for serving static files
+    routes.MainIndexRoute()
 
     // Define route handlers
     http.HandleFunc(rcon, routes.HandleRcon)
