@@ -7,7 +7,12 @@ RUN apk --no-cache add --update gcc musl-dev
 # Set the working directory
 WORKDIR /build
 
-COPY cmd/* /build
+COPY cmd/config /build/config
+COPY cmd/public /build/public
+COPY cmd/routes /build/routes
+COPY cmd/go.mod /build/go.mod
+COPY cmd/go.sub /build/go.sum
+COPY cmd/main.go /build/main.go
 
 # Create the necessary directories
 RUN mkdir -p /config /app/rcon
