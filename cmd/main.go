@@ -3,8 +3,8 @@ package main
 import (
     "fmt"
     "net/http"
-    "rcon-cli-web/internal/routes"
-    "rcon-cli-web/internal/config"
+    "rcon-cli-web/routes"
+    "rcon-cli-web/config"
 )
 
 func main() {

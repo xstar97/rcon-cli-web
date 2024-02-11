@@ -7,9 +7,10 @@ RUN apk --no-cache add --update gcc musl-dev
 # Set the working directory
 WORKDIR /build
 
-# Copy Go module files
-COPY go.mod .
-COPY go.sum .
+COPY cmd/* /build
+
+# Create the necessary directories
+RUN mkdir -p /config /app/rcon
 
 # Download the latest release of rcon-cli
 RUN apk add --no-cache curl tar \
@@ -17,13 +18,6 @@ RUN apk add --no-cache curl tar \
     && curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4) \
     && tar -xzf /tmp/rcon.tar.gz -C /app/rcon --strip-components=1 \
     && rm /tmp/rcon.tar.gz
-
-# Copy specific directories
-COPY cmd /build/cmd
-COPY internal /build/internal
-
-# Set the working directory for building the application
-WORKDIR /build/cmd/rcon-cli-web
 
 # Build the Go application
 ARG VERSION=docker
@@ -37,9 +31,6 @@ LABEL maintainer="Xstar97 <dev.xstar97@gmail.com>"
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates
-
-# Create the necessary directories
-RUN mkdir -p /config /app/rcon
 
 # Set the working directory
 WORKDIR /app
