@@ -12,6 +12,11 @@ import (
 )
 
 func main() {
+    // Check if the "./public" directory exists
+    if _, err := os.Stat("./public"); os.IsNotExist(err) {
+        log.Fatal("The ./public directory does not exist")
+    }
+
     // Serve files from the "public" directory
     fs := http.FileServer(http.Dir("./public"))
     http.Handle("/", fs)

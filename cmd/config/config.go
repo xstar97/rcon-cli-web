@@ -51,7 +51,7 @@ var CONFIG = struct {
 func init() {
     flag.StringVar(&CONFIG.PORT, "port", "3000", "Web port")
     flag.StringVar(&CONFIG.MODE, "mode", "dark", "Dark/light mode")
-    flag.StringVar(&CONFIG.CLI_ROOT, "cli-root", "/app/rcon", "Root path to rcon file")
+    flag.StringVar(&CONFIG.CLI_ROOT, "cli-root", "/app/rcon/rcon", "Root path to rcon file")
     flag.StringVar(&CONFIG.CLI_CONFIG, "cli-config", "/config/rcon.yaml", "Root path to rcon.yaml")
     flag.StringVar(&CONFIG.CLI_DEFAULT_SERVER, "cli-def-server", "default", "Default rcon env")
     flag.StringVar(&CONFIG.DB_TYPE, "db-type", "json", "Database type: json")
