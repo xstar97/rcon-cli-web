@@ -22,6 +22,9 @@ RUN apk add --no-cache curl tar \
 COPY cmd /build/cmd
 COPY internal /build/internal
 
+# Set the working directory for building the application
+WORKDIR /build/cmd/rcon-cli-web
+
 # Build the Go application
 ARG VERSION=docker
 RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /build/rcon-cli-web
@@ -54,7 +57,7 @@ ENV PORT=3000 \
     DB_JSON_FILE=/config/saved.json
 
 # Expose the port
-EXPOSE 3000
+EXPOSE $PORT
 
 # Set the default command to run the binary
 CMD ["/app/rcon-cli-web"]
