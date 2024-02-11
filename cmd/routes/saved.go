@@ -1,6 +1,7 @@
 package routes
 
 import (
+    "log"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,27 +10,27 @@ import (
 	"rcon-cli-web/config"
 )
 
-// Define a struct to represent the saved data
+// SavedData represents the saved data structure
 type SavedData struct {
 	Server string `json:"server"`
 	Mode   string `json:"mode"`
 }
 
 // Function to read saved data from JSON file
-func ReadSavedDataFromFile() (*SavedData, error) {
+func ReadSavedDataFromFile() (SavedData, error) {
 	filePath := config.CONFIG.DB_JSON_FILE
 
 	// Check if the file exists
 	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
 		// File doesn't exist, generate it with default values
-		data := &SavedData{
+		data := SavedData{
 			Server: config.CONFIG.CLI_DEFAULT_SERVER,
 			Mode:   config.CONFIG.MODE,
 		}
 		err := WriteSavedDataToFile(data)
 		if err != nil {
-			return nil, err
+			return SavedData{}, err
 		}
 		return data, nil
 	}
@@ -37,36 +38,59 @@ func ReadSavedDataFromFile() (*SavedData, error) {
 	// File exists, read data from the file
 	fileContent, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return nil, err
+		return SavedData{}, err
 	}
 
 	// Unmarshal the file content into SavedData struct
-	data := &SavedData{}
-	err = json.Unmarshal(fileContent, data)
+	var data SavedData
+	err = json.Unmarshal(fileContent, &data)
 	if err != nil {
-		return nil, err
+		return SavedData{}, err
 	}
 
 	return data, nil
 }
 
 // Function to write saved data to JSON file
-func WriteSavedDataToFile(data *SavedData) error {
-	filePath := config.CONFIG.DB_JSON_FILE
+func WriteSavedDataToFile(data SavedData) error {
+    filePath := config.CONFIG.DB_JSON_FILE
 
-	// Marshal the data into JSON
-	fileContent, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		return err
-	}
+    // Log the file path
+    log.Printf("Writing data to file: %s", filePath)
 
-	// Write the JSON data to the file
-	err = ioutil.WriteFile(filePath, fileContent, 0644)
-	if err != nil {
-		return err
-	}
+    // Check if the file exists and is writable
+    _, err := os.Stat(filePath)
+    if os.IsNotExist(err) {
+        // If the file doesn't exist, try to create it
+        log.Printf("File does not exist. Creating file...")
+        file, err := os.Create(filePath)
+        if err != nil {
+            log.Printf("Error creating file: %v", err)
+            return err
+        }
+        defer file.Close()
+        log.Printf("File created successfully.")
+    } else if err != nil {
+        log.Printf("Error checking file status: %v", err)
+        return err
+    }
 
-	return nil
+    // Marshal the data into JSON
+    fileContent, err := json.MarshalIndent(data, "", "  ")
+    if err != nil {
+        log.Printf("Error marshaling data to JSON: %v", err)
+        return err
+    }
+
+    // Write the JSON data to the file
+    err = ioutil.WriteFile(filePath, fileContent, 0644)
+    if err != nil {
+        log.Printf("Error writing data to file: %v", err)
+        return err
+    }
+
+    log.Printf("Data successfully written to file.")
+    return nil
 }
 
 // HandleGetSavedData handles GET requests to retrieve saved data
@@ -91,45 +115,34 @@ func HandleGetSavedData(w http.ResponseWriter, r *http.Request) {
 
 // HandleUpdateSavedData handles POST requests to update saved data
 func HandleUpdateSavedData(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+    if r.Method != "POST" {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
 
-	// Handle POST request to update saved data
-	// Read the request body to get the updated saved data
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusBadRequest)
-		return
-	}
-	// Decode the request body into a map
-	var requestBody map[string]string
-	err = json.Unmarshal(body, &requestBody)
-	if err != nil {
-		http.Error(w, "Failed to decode request body", http.StatusBadRequest)
-		return
-	}
-	// Update the saved data
-	savedData, err := ReadSavedDataFromFile()
-	if err != nil {
-		http.Error(w, "Failed to read saved data", http.StatusInternalServerError)
-		return
-	}
-	if server, ok := requestBody["server"]; ok {
-		savedData.Server = server
-	}
-	if mode, ok := requestBody["mode"]; ok {
-		savedData.Mode = mode
-	}
-	err = WriteSavedDataToFile(savedData)
-	if err != nil {
-		http.Error(w, "Failed to save data", http.StatusInternalServerError)
-		return
-	}
-	// Return a success message
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Saved data updated successfully")
+    // Handle POST request to update saved data
+    // Read the request body to get the updated saved data
+    body, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+        http.Error(w, "Failed to read request body", http.StatusBadRequest)
+        return
+    }
+    // Decode the request body into a SavedData object
+    var requestBody SavedData
+    err = json.Unmarshal(body, &requestBody)
+    if err != nil {
+        http.Error(w, "Failed to decode request body", http.StatusBadRequest)
+        return
+    }
+    // Update the saved data
+    err = WriteSavedDataToFile(requestBody)
+    if err != nil {
+        http.Error(w, "Failed to save data", http.StatusInternalServerError)
+        return
+    }
+    // Return an acknowledgment
+    w.WriteHeader(http.StatusAccepted)
+    fmt.Fprintf(w, "Data received and saved successfully")
 }
 
 // HandleSaved handles GET and POST requests for saving and retrieving data

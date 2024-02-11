@@ -153,18 +153,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function to update saved data
     function updateSavedData(data) {
+        let body = JSON.stringify(data);
+        console.log(`saved body: ${body}`)
         fetch(SAVED_DATA_ROUTE, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: data
+            body: body
         })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to update saved data.');
             }
-            return response.json();
+            console.log('Data received and saved successfully');
         })
         .catch(error => console.error('Error updating saved data:', error));
     }
