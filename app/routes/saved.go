@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"rcon-cli-web/config"
 )
 
@@ -49,17 +50,22 @@ func ReadSavedDataFromFile() (*SavedData, error) {
 	return data, nil
 }
 
-// Function to save data to JSON file
-func SaveDataToFile(data *SavedData) error {
+// Function to write saved data to JSON file
+func WriteSavedDataToFile(data *SavedData) error {
 	filePath := config.CONFIG.DB_JSON_FILE
-	fileContent, err := json.MarshalIndent(data, "", "    ")
+
+	// Marshal the data into JSON
+	fileContent, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
+
+	// Write the JSON data to the file
 	err = ioutil.WriteFile(filePath, fileContent, 0644)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -94,7 +100,7 @@ func HandleSaved(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// Save the updated data
-		err = SaveDataToFile(&requestBody)
+		err = WriteSavedDataToFile(&requestBody)
 		if err != nil {
 			http.Error(w, "Failed to save data", http.StatusInternalServerError)
 			return
