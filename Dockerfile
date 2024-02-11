@@ -11,7 +11,7 @@ COPY cmd/config /build/config
 COPY cmd/public /build/public
 COPY cmd/routes /build/routes
 COPY cmd/go.mod /build/go.mod
-COPY cmd/go.sub /build/go.sum
+COPY cmd/go.sum /build/go.sum
 COPY cmd/main.go /build/main.go
 
 # Create the necessary directories
