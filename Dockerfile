@@ -18,12 +18,13 @@ RUN apk add --no-cache curl tar \
     && tar -xzf /tmp/rcon.tar.gz -C /app/rcon --strip-components=1 \
     && rm /tmp/rcon.tar.gz
 
-# Copy the Go source code
-COPY app .
+# Copy specific directories
+COPY cmd /build/cmd
+COPY internal /build/internal
 
 # Build the Go application
 ARG VERSION=docker
-RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /app/rcon-cli-web
+RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /build/rcon-cli-web
 
 # Stage 2 - Create the final image.
 FROM alpine AS runner
@@ -40,8 +41,8 @@ RUN mkdir -p /config /app/rcon
 # Set the working directory
 WORKDIR /app
 
-# Copy necessary files
-COPY --from=builder /app/rcon-cli-web /app/
+# Copy necessary files from the builder stage
+COPY --from=builder /build/rcon-cli-web /app/
 
 # Set environment variables
 ENV PORT=3000 \
