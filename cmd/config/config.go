@@ -59,7 +59,7 @@ func init() {
     flag.StringVar(&CONFIG.CLI_DEFAULT_SERVER, "cli-def-server", "default", "Default rcon env")
     flag.StringVar(&CONFIG.DB_TYPE, "db-type", "json", "Database type: json")
     flag.StringVar(&CONFIG.DB_JSON_FILE, "db-json-file", "/config/saved.json", "DB JSON file")
-    flag.StringVar(&CONFIG.PUBLIC_DIR, "public-dir", "/app/public", "Public directory")
+    flag.StringVar(&CONFIG.PUBLIC_DIR, "public-dir", "./public", "Public directory")
     flag.Parse()
 
     // Log the set flags

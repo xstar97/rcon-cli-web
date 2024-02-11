@@ -5,12 +5,13 @@ FROM golang:1.19.3-alpine AS builder
 RUN apk --no-cache add --update gcc musl-dev
 
 # Create the necessary directories
-RUN mkdir -p /build /output /app /app/public
+RUN mkdir -p /build /output /app
 
 # Set the working directory
 WORKDIR /build
 
 # Copy all files from the cmd directory
+COPY cmd/public /build/public
 COPY cmd/config /build/config
 COPY cmd/routes /build/routes
 COPY cmd/go.mod /build/go.mod
@@ -38,10 +39,6 @@ WORKDIR /app
 
 # Copy the binary from the builder stage
 COPY --from=builder /output/rcon-cli-web /app/
-
-COPY public/index.html /app/public/index.html
-COPY public/index.js /app/public/index.js
-COPY public/styles.css /app/public/styles.css
 
 # Create the necessary directories
 RUN mkdir -p /app/rcon /config
