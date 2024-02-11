@@ -54,4 +54,4 @@ ENV PORT=3000
 EXPOSE $PORT
 
 # Set the default command to run the binary
-CMD ["/app/rcon-cli-web", "--port", "$PORT"]
+CMD ["/app/rcon-cli-web"]
