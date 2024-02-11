@@ -2,6 +2,7 @@ package config
 
 import (
     "flag"
+    "log"
 )
 
 // Constants for routes
@@ -60,4 +61,14 @@ func init() {
     flag.StringVar(&CONFIG.DB_JSON_FILE, "db-json-file", "/config/saved.json", "DB JSON file")
     flag.StringVar(&CONFIG.PUBLIC_DIR, "public-dir", "/app/public", "Public directory")
     flag.Parse()
+
+    // Log the set flags
+    log.Printf("Web port: %s", CONFIG.PORT)
+    log.Printf("Dark/light mode: %s", CONFIG.MODE)
+    log.Printf("Root path to rcon file: %s", CONFIG.CLI_ROOT)
+    log.Printf("Root path to rcon.yaml: %s", CONFIG.CLI_CONFIG)
+    log.Printf("Default rcon env: %s", CONFIG.CLI_DEFAULT_SERVER)
+    log.Printf("Database type: %s", CONFIG.DB_TYPE)
+    log.Printf("DB JSON file: %s", CONFIG.DB_JSON_FILE)
+    log.Printf("Public directory: %s", CONFIG.PUBLIC_DIR)
 }

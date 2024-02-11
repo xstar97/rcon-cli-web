@@ -10,7 +10,6 @@ import (
 )
 
 func HandleLogs(w http.ResponseWriter, r *http.Request) {
-
 	// Extract server name from URL path
 	server := strings.TrimPrefix(r.URL.Path, "/logs/")
 	fmt.Println("Server:", server)
@@ -32,6 +31,8 @@ func HandleLogs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("Server configurations read successfully")
+
 	// Parse the YAML configuration data
 	var servers map[string]map[string]string
 	err = yaml.Unmarshal(configData, &servers)
@@ -40,6 +41,8 @@ func HandleLogs(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error parsing config data:", err)
 		return
 	}
+
+	fmt.Println("Server configurations parsed successfully")
 
 	// Get the log file path for the specified server
 	logFile, ok := servers[server]["log"]
@@ -59,9 +62,13 @@ func HandleLogs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("Log file read successfully")
+
 	// Set the content type to text/plain
 	w.Header().Set("Content-Type", "text/plain")
 
 	// Write the log data to the response writer
 	w.Write(logData)
+
+	fmt.Println("Log data sent successfully")
 }

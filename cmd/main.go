@@ -30,20 +30,19 @@ func main() {
     http.HandleFunc(logs, routes.HandleLogs)
     http.HandleFunc(saved, routes.HandleSaved)
 
-    fmt.Printf("Server is listening on port %s...\n", port)
+    // Start the server
+    go func() {
+        fmt.Printf("Server is starting on port %s...\n", port)
+        if err := http.ListenAndServe(port, nil); err != nil {
+            log.Fatalf("Server failed to start: %v", err)
+        }
+    }()
 
     // Set up signal handling to capture the reason for exit
     sigCh := make(chan os.Signal, 1)
     signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
-    go func() {
-        sig := <-sigCh
-        log.Printf("Received signal %v. Exiting...", sig)
-        os.Exit(0)
-    }()
-
-    // Start the server
-    if err := http.ListenAndServe(port, nil); err != nil {
-        log.Printf("Server error: %v", err)
-    }
+    // Wait for a signal
+    sig := <-sigCh
+    log.Printf("Received signal %v. Shutting down...", sig)
 }
