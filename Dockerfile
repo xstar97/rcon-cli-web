@@ -8,7 +8,12 @@ RUN apk --no-cache add --update gcc musl-dev
 WORKDIR /build
 
 # Copy necessary files from the cmd directory
-COPY cmd/* /build
+COPY cmd/public /build/public
+COPY cmd/routes /build/routes
+COPY cmd/config /build/config
+COPY cmd/go.mod /build/go.mod
+COPY cmd/go.sum /build/go.sum
+COPY cmd/main.go /build/main.go
 
 # Build the Go application
 ARG VERSION=docker
