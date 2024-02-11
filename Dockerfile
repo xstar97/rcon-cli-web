@@ -7,9 +7,9 @@ RUN apk --no-cache add --update gcc musl-dev
 # Set the working directory
 WORKDIR /build
 
-COPY cmd/config /build/config
-COPY cmd/public /build/public
-COPY cmd/routes /build/routes
+COPY cmd/config/* /build/config
+COPY cmd/public/* /build/public
+COPY cmd/routes/* /build/routes
 COPY cmd/go.mod /build/go.mod
 COPY cmd/go.sum /build/go.sum
 COPY cmd/main.go /build/main.go
@@ -26,7 +26,7 @@ RUN apk add --no-cache curl tar \
 
 # Build the Go application
 ARG VERSION=docker
-RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /build/rcon-cli-web
+RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /build/output/rcon-cli-web
 
 # Stage 2 - Create the final image.
 FROM alpine AS runner
@@ -41,7 +41,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 # Copy necessary files from the builder stage
-COPY --from=builder /build/rcon-cli-web /app/
+COPY --from=builder /build/output/rcon-cli-web /app/
 
 # Set environment variables
 ENV PORT=3000 \
