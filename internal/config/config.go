@@ -48,11 +48,11 @@ var CONFIG = struct {
 }{
     PORT:               getEnv("PORT", "3000"),
     MODE:               getEnv("MODE", "dark"),
-    CLI_ROOT:           getEnv("CLI_ROOT", "/app/rcon"),
-    CLI_CONFIG:         getEnv("CLI_CONFIG", "/config/rcon.yaml"),
+    CLI_ROOT:           getEnv("CLI_ROOT", "/code/examples/rcon/rcon"),
+    CLI_CONFIG:         getEnv("CLI_CONFIG", "/code/examples/rcon/rcon.yaml"),
     CLI_DEFAULT_SERVER: getEnv("CLI_DEFAULT_SERVER", "default"),
     DB_TYPE:            getEnv("DB_TYPE", "json"),
-    DB_JSON_FILE:       getEnv("DB_JSON_FILE", "/config/saved.json"),
+    DB_JSON_FILE:       getEnv("DB_JSON_FILE", "saved.json"),
 }
 
 // Get environment variable value or default

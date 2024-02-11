@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"rcon-cli-web/config"
+	"rcon-cli-web/internal/config"
 	"strings"
 	"gopkg.in/yaml.v2"
 )

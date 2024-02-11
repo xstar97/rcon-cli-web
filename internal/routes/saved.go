@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"rcon-cli-web/config"
+	"rcon-cli-web/internal/config"
 )
 
 // Define a struct to represent the saved data
