@@ -2,19 +2,23 @@
 FROM golang:1.19.3-alpine AS builder
 
 # Install necessary build dependencies
-RUN apk --no-cache add --update gcc musl-dev curl tar
+RUN apk --no-cache add --update gcc musl-dev
 
 # Create the necessary directories
+RUN mkdir -p /build /output /app /app/public
+
+# Set the working directory
 WORKDIR /build
 
-# Copy Go module files
-COPY cmd/go.mod cmd/go.sum ./
+# Copy all files from the cmd directory
+COPY cmd/config /build/config
+COPY cmd/routes /build/routes
+COPY cmd/go.mod /build/go.mod
+COPY cmd/go.sum /build/go.sum
+COPY cmd/main.go /build/main.go
 
 # Download dependencies
 RUN go mod download
-
-# Copy the rest of the source code
-COPY cmd/* ./
 
 # Build the Go application
 ARG VERSION=docker
@@ -22,6 +26,9 @@ RUN CGO_ENABLED=1 go build -o /output/rcon-cli-web .
 
 # Stage 2 - Create the final image
 FROM alpine AS runner
+
+# Set maintainer label
+LABEL maintainer="Xstar97 <dev.xstar97@gmail.com>"
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates
@@ -32,23 +39,28 @@ WORKDIR /app
 # Copy the binary from the builder stage
 COPY --from=builder /output/rcon-cli-web /app/
 
-# Copy the public directory
-COPY public/* /app/public/
+COPY public/index.html /app/public/index.html
+COPY public/index.js /app/public/index.js
+COPY public/styles.css /app/public/styles.css
+
+# Create the necessary directories
+RUN mkdir -p /config /app/rcon
 
 # Download the latest release of rcon-cli
-RUN mkdir -p /app/rcon \
+RUN apk add --no-cache curl tar \
+    && mkdir -p /app/rcon \
     && curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4) \
     && tar -xzf /tmp/rcon.tar.gz -C /app/rcon --strip-components=1 \
     && rm /tmp/rcon.tar.gz
+
+# Create a volume for /config
+VOLUME /config
 
 # Set environment variables
 ENV PORT=3000
 
 # Expose the port
 EXPOSE $PORT
-
-# Create a volume for /config
-VOLUME /config
 
 # Set the default command to run the binary
 CMD ["/app/rcon-cli-web"]
