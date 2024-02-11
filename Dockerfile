@@ -44,7 +44,7 @@ COPY public/index.js /app/public/index.js
 COPY public/styles.css /app/public/styles.css
 
 # Create the necessary directories
-RUN mkdir -p /config /app/rcon
+RUN mkdir -p /app/rcon
 
 # Download the latest release of rcon-cli
 RUN apk add --no-cache curl tar \
@@ -53,8 +53,18 @@ RUN apk add --no-cache curl tar \
     && tar -xzf /tmp/rcon.tar.gz -C /app/rcon --strip-components=1 \
     && rm /tmp/rcon.tar.gz
 
-# Create a volume for /config
-VOLUME /config
+# Set user and group environment variables
+ENV APP_USER=apps \
+    APP_GROUP=apps \
+    APP_USER_ID=568 \
+    APP_GROUP_ID=568
+
+# Create a non-root user and group
+RUN addgroup -g $APP_GROUP_ID -S $APP_GROUP && \
+    adduser -u $APP_USER_ID -S $APP_USER -G $APP_GROUP
+
+# Change ownership of the /config directory to the non-root user and group
+RUN chown -R $APP_USER:$APP_GROUP /config
 
 # Set environment variables
 ENV PORT=3000
