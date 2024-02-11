@@ -1,7 +1,7 @@
 package config
 
 import (
-    "os"
+    "flag"
 )
 
 // Constants for routes
@@ -45,20 +45,16 @@ var CONFIG = struct {
     // Database type: json
     DB_TYPE string
     DB_JSON_FILE string
-}{
-    PORT:               getEnv("PORT", "3000"),
-    MODE:               getEnv("MODE", "dark"),
-    CLI_ROOT:           getEnv("CLI_ROOT", "/app/rcon"),
-    CLI_CONFIG:         getEnv("CLI_CONFIG", "/config/rcon.yaml"),
-    CLI_DEFAULT_SERVER: getEnv("CLI_DEFAULT_SERVER", "default"),
-    DB_TYPE:            getEnv("DB_TYPE", "json"),
-    DB_JSON_FILE:       getEnv("DB_JSON_FILE", "/config/saved.json"),
-}
+}{}
 
-// Get environment variable value or default
-func getEnv(key, fallback string) string {
-    if value, ok := os.LookupEnv(key); ok {
-        return value
-    }
-    return fallback
+// Parse flags
+func init() {
+    flag.StringVar(&CONFIG.PORT, "port", "3000", "Web port")
+    flag.StringVar(&CONFIG.MODE, "mode", "dark", "Dark/light mode")
+    flag.StringVar(&CONFIG.CLI_ROOT, "cli-root", "/app/rcon", "Root path to rcon file")
+    flag.StringVar(&CONFIG.CLI_CONFIG, "cli-config", "/config/rcon.yaml", "Root path to rcon.yaml")
+    flag.StringVar(&CONFIG.CLI_DEFAULT_SERVER, "cli-def-server", "default", "Default rcon env")
+    flag.StringVar(&CONFIG.DB_TYPE, "db-type", "json", "Database type: json")
+    flag.StringVar(&CONFIG.DB_JSON_FILE, "db-json-file", "/config/saved.json", "DB JSON file")
+    flag.Parse()
 }

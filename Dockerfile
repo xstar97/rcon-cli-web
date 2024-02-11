@@ -44,8 +44,7 @@ WORKDIR /app
 COPY --from=builder /build/output/rcon-cli-web /app/
 
 # Set environment variables
-ENV PORT=3000 \
-    MODE=dark \
+ENV MODE=dark \
     CLI_ROOT=/app/rcon \
     CLI_CONFIG=/config/rcon.yaml \
     CLI_DEFAULT_SERVER=default \
@@ -56,4 +55,4 @@ ENV PORT=3000 \
 EXPOSE $PORT
 
 # Set the default command to run the binary
-CMD ["/app/rcon-cli-web"]
+CMD ["/app/rcon-cli-web", "--port", "$PORT", "--mode", "$MODE", "--cli-root", "$CLI_ROOT", "--cli-config", "$CLI_CONFIG", "--cli-def-server", "$CLI_DEFAULT_SERVER", "--db-type", "$DB_TYPE", "--db-json-file", "$DB_JSON_FILE"]
