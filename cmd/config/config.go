@@ -45,6 +45,8 @@ var CONFIG = struct {
     // Database type: json
     DB_TYPE string
     DB_JSON_FILE string
+    // Public directory
+    PUBLIC_DIR string
 }{}
 
 // Parse flags
@@ -56,5 +58,6 @@ func init() {
     flag.StringVar(&CONFIG.CLI_DEFAULT_SERVER, "cli-def-server", "default", "Default rcon env")
     flag.StringVar(&CONFIG.DB_TYPE, "db-type", "json", "Database type: json")
     flag.StringVar(&CONFIG.DB_JSON_FILE, "db-json-file", "/config/saved.json", "DB JSON file")
+    flag.StringVar(&CONFIG.PUBLIC_DIR, "public-dir", "/app/public", "Public directory")
     flag.Parse()
 }

@@ -12,7 +12,6 @@ WORKDIR /build
 
 # Copy all files from the cmd directory
 COPY cmd/config /build/config
-COPY cmd/public /app/public
 COPY cmd/routes /build/routes
 COPY cmd/go.mod /build/go.mod
 COPY cmd/go.sum /build/go.sum
@@ -37,6 +36,8 @@ WORKDIR /app
 # Copy the binary from the builder stage
 COPY --from=builder /output/rcon-cli-web /app/
 
+COPY public/* /app/public
+
 # Create the necessary directories
 RUN mkdir -p /config /app/rcon
 
@@ -57,4 +58,4 @@ ENV PORT=3000
 EXPOSE $PORT
 
 # Set the default command to run the binary
-CMD ["/app/rcon-cli-web", "--port=$PORT"]
+CMD ["/app/rcon-cli-web", "--port=$PORT","--public-dir=/app/public"]

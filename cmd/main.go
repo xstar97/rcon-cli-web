@@ -6,21 +6,21 @@ import (
     "net/http"
     "os"
     "os/signal"
+    "syscall"
     "rcon-cli-web/config"
     "rcon-cli-web/routes"
-    "syscall"
 )
 
 func main() {
-    // Check if the "./public" directory exists
-    if _, err := os.Stat("./public"); os.IsNotExist(err) {
-        log.Fatal("The ./public directory does not exist")
+    // Check if the public directory exists
+    if _, err := os.Stat(config.CONFIG.PUBLIC_DIR); os.IsNotExist(err) {
+        log.Fatalf("The %s directory does not exist", config.CONFIG.PUBLIC_DIR)
     }
 
-    // Serve files from the "public" directory
-    fs := http.FileServer(http.Dir("./public"))
+    // Serve files from the public directory
+    fs := http.FileServer(http.Dir(config.CONFIG.PUBLIC_DIR))
     http.Handle("/", fs)
-    
+
     // Use the PORT constant from config
     port := fmt.Sprintf(":%s", config.CONFIG.PORT)
     rcon := config.ROUTES.RCON
