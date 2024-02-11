@@ -4,20 +4,18 @@ FROM golang:1.19.3-alpine AS builder
 # Install necessary build dependencies
 RUN apk --no-cache add --update gcc musl-dev
 
+# Create the necessary directories
+RUN mkdir -p /build /output
+
 # Set the working directory
 WORKDIR /build
 
-# Copy necessary files from the cmd directory
-COPY cmd/public /build/public
-COPY cmd/routes /build/routes
-COPY cmd/config /build/config
-COPY cmd/go.mod /build/go.mod
-COPY cmd/go.sum /build/go.sum
-COPY cmd/main.go /build/main.go
+# Copy all files from the cmd directory
+COPY cmd /build
 
 # Build the Go application
 ARG VERSION=docker
-RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /build/output/rcon-cli-web /build/*.go
+RUN CGO_ENABLED=1 go build -ldflags "-s -w -X main.ServiceVersion=${VERSION}" -o /output/rcon-cli-web .
 
 # Stage 2 - Create the final image
 FROM alpine AS runner
@@ -32,7 +30,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 # Copy the binary from the builder stage
-COPY --from=builder /build/output/rcon-cli-web /app/
+COPY --from=builder /output/rcon-cli-web /app/
 
 # Create the necessary directories
 RUN mkdir -p /config /app/rcon
