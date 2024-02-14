@@ -11,12 +11,12 @@ RUN mkdir -p /build /output /app
 WORKDIR /build
 
 # Copy all files from the cmd directory
-COPY cmd/public /build/public
-COPY cmd/config /build/config
-COPY cmd/routes /build/routes
-COPY cmd/go.mod /build/go.mod
-COPY cmd/go.sum /build/go.sum
-COPY cmd/main.go /build/main.go
+COPY cmd/public ./public
+COPY cmd/config ./config
+COPY cmd/routes ./routes
+COPY cmd/go.mod ./go.mod
+COPY cmd/go.sum ./go.sum
+COPY cmd/main.go ./main.go
 
 # Download dependencies
 RUN go mod download
@@ -38,16 +38,15 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 # Copy the binary from the builder stage
-COPY --from=builder /output/rcon-cli-web /app/
+COPY --from=builder /output/rcon-cli-web ./
 
 # Create the necessary directories
 RUN mkdir -p /app/rcon /config
 
 # Download the latest release of rcon-cli
 RUN apk add --no-cache curl tar \
-    && mkdir -p /app/rcon \
     && curl -L -o /tmp/rcon.tar.gz $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url.*amd64_linux.tar.gz" | cut -d '"' -f 4) \
-    && tar -xzf /tmp/rcon.tar.gz -C /app/rcon --strip-components=1 \
+    && tar -xzf /tmp/rcon.tar.gz -C ./rcon --strip-components=1 \
     && rm /tmp/rcon.tar.gz
 
 # Set user and group environment variables
@@ -66,8 +65,11 @@ RUN chown -R $APP_USER:$APP_GROUP /config
 # Set environment variables
 ENV PORT=3000
 
+# enviromental variable to append flags to CMD
+ENV ARGS=
+
 # Expose the port
 EXPOSE $PORT
 
 # Set the default command to run the binary
-CMD ["/app/rcon-cli-web"]
+CMD sh -c "./rcon-cli-web --port $PORT $ARGS"
