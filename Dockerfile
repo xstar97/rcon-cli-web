@@ -23,7 +23,7 @@ RUN go mod download
 
 # Build the Go application
 ARG VERSION=docker
-RUN CGO_ENABLED=1 go build -o /output/rcon-cli-web .
+RUN CGO_ENABLED=1 go build -ldflags "-w -s" -o /output/rcon-cli-web .
 
 # Stage 2 - Create the final image
 FROM alpine AS runner
