@@ -3,12 +3,11 @@ version: '3.8'
 services:
   rcon-cli-web:
     image: ghcr.io/xstar97/rcon-cli-web:latest
+    environment:
+      - PORT=3000
+      # set a custom options via flags.
+      # - ARGS=--mode=light
     ports:
       - "3000:3000"
     volumes:
       - ./config:/config
-    #command: ["--port=3000", "--mode=light"]
-    # set a custom port and other options via flags.
-    # leave as default.
-    # nothing here you need to change.
-
