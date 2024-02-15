@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"rcon-cli-web/config"
 	"strings"
-	"gopkg.in/yaml.v2"
 )
 
 func HandleLogs(w http.ResponseWriter, r *http.Request) {
@@ -20,38 +19,18 @@ func HandleLogs(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Using default server:", server)
 	}
 
-	// Read server configurations from the file
-	configFile := config.CONFIG.CLI_CONFIG
-	fmt.Println("Config file:", configFile)
-
-	configData, err := ioutil.ReadFile(configFile)
+	// Read server configuration using GetServer
+	serverConfig, err := config.GetServer(server)
 	if err != nil {
-		http.Error(w, "Failed to read server configurations", http.StatusInternalServerError)
-		fmt.Println("Error reading config file:", err)
+		http.Error(w, fmt.Sprintf("Failed to get server '%s' configuration", server), http.StatusInternalServerError)
+		fmt.Println("Error getting server configuration:", err)
 		return
 	}
 
 	fmt.Println("Server configurations read successfully")
 
-	// Parse the YAML configuration data
-	var servers map[string]map[string]string
-	err = yaml.Unmarshal(configData, &servers)
-	if err != nil {
-		http.Error(w, "Failed to parse server configurations", http.StatusInternalServerError)
-		fmt.Println("Error parsing config data:", err)
-		return
-	}
-
-	fmt.Println("Server configurations parsed successfully")
-
 	// Get the log file path for the specified server
-	logFile, ok := servers[server]["log"]
-	if !ok {
-		http.Error(w, "Log file not found for server "+server, http.StatusNotFound)
-		fmt.Println("Log file not found for server:", server)
-		return
-	}
-
+	logFile := serverConfig.Log
 	fmt.Println("Log file:", logFile)
 
 	// Read the contents of the log file

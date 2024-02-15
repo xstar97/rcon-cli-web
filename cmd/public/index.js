@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Routes
     const SERVERS_ROUTE = "/rcon/servers";
+    const SERVER_HEALTH = "/rcon/health";
     const SAVED_DATA_ROUTE = "/saved";
     const RCON_ROUTE = "/rcon";
     const VERSION_ROUTE = "/rcon/version";
@@ -58,6 +59,11 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error("Error fetching saved data:", error));
     }
     
+    //  initially and every 10 seconds
+    checkConnectionStatus();
+
+    setInterval(checkConnectionStatus, 10000); // 10 seconds interval
+
     // Function to add server options to the select element
     function addServerOption(serverName) {
         const option = document.createElement("option");
@@ -140,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     serversSelect.addEventListener("change", function() {
         currentServer = this.value;
+        checkConnectionStatus();
         updateSavedData({"server": currentServer,"mode": currentMode});
         clearOutput();
     });
@@ -177,4 +184,27 @@ document.addEventListener("DOMContentLoaded", function() {
         const logsUrl = `${LOGS_ROUTE}/${currentServer}`;
         window.open(logsUrl, '_blank');
     });
+
+    // Function to check connection status and update UI
+    function checkConnectionStatus() {
+        fetch(SERVER_HEALTH)
+            .then(response => response.json())
+            .then(data => {
+                if(data.connected == true){
+                    // Server is connected
+                    connectionStatus.textContent = "Connected";
+                    connectionStatus.style.color = "green";
+                } else {
+                    // Server is not connected
+                    connectionStatus.textContent = "Disconnected";
+                    connectionStatus.style.color = "red";
+                }
+            })
+            .catch(error => {
+                // Error occurred, server might be unreachable
+                connectionStatus.textContent = "Error";
+                connectionStatus.style.color = "red";
+                console.error('Error checking connection status:', error);
+            });
+    }
 });

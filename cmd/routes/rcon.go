@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"rcon-cli-web/config"
 	"strings"
-	"gopkg.in/yaml.v2"
     "log"
-	"os/exec"
+    "net"
+    "strconv"
+    "time"
 )
 
 type RconRequest struct {
@@ -28,19 +29,11 @@ type RconVersionResponse struct {
 	UpdateAvailable bool   `json:"updateAvailable"`
 }
 
-// ExecuteShellCommand executes a shell command and returns its output
-func ExecuteShellCommand(server, command string) ([]byte, error) {
-    // Set the command to execute
-    cmd := exec.Command(config.CONFIG.CLI_ROOT, config.COMMANDS.CONFIG, config.CONFIG.CLI_CONFIG, config.COMMANDS.ENV, server, command)
-    
-    // Capture the output of the command
-    output, err := cmd.CombinedOutput()
-    if err != nil {
-        return nil, err
-    }
-
-    return output, nil
+type RconHealthResponse struct {
+    Server    string `json:"server"`
+	Connected bool   `json:"connected"`
 }
+
 
 func HandleRcon(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
@@ -60,7 +53,7 @@ func HandleRcon(w http.ResponseWriter, r *http.Request) {
     log.Println("Received Rcon request:", req)
 
     // Execute the shell command
-    output, err := ExecuteShellCommand(req.Server, req.Command)
+    output, err := config.ExecuteShellCommand(config.CONFIG.CLI_ROOT, config.COMMANDS.CONFIG, config.CONFIG.CLI_CONFIG, config.COMMANDS.ENV, req.Server, req.Command)
     if err != nil {
         http.Error(w, "Failed to run rcon-cli: "+err.Error(), http.StatusInternalServerError)
         log.Println("Failed to run rcon-cli:", err)
@@ -93,57 +86,45 @@ func HandleRcon(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRconServers(w http.ResponseWriter, r *http.Request) {
-    // Read server configurations from the file
-    configFile := config.CONFIG.CLI_CONFIG
-    configData, err := ioutil.ReadFile(configFile)
-    if err != nil {
-        http.Error(w, "Failed to read server configurations", http.StatusInternalServerError)
-        log.Println("Failed to read server configurations:", err)
-        return
-    }
+	// Read server configurations from the file
+	servers, err := config.ReadConfig()
+	if err != nil {
+		http.Error(w, "Failed to read server configurations", http.StatusInternalServerError)
+		log.Println("Failed to read server configurations:", err)
+		return
+	}
 
-    log.Println("Server configurations read successfully")
+	log.Println("Server configurations read successfully")
 
-    // Parse the YAML configuration data
-    var servers map[string]map[string]string
-    err = yaml.Unmarshal(configData, &servers)
-    if err != nil {
-        http.Error(w, "Failed to parse server configurations", http.StatusInternalServerError)
-        log.Println("Failed to parse server configurations:", err)
-        return
-    }
+	// Extract server name and type from each configuration
+	var serverData []struct {
+		Server string `json:"server"`
+		Type   string `json:"type"`
+	}
+	for name, config := range servers {
+		server := struct {
+			Server string `json:"server"`
+			Type   string `json:"type"`
+		}{
+			Server: name,
+			Type:   config.Type,
+		}
+		serverData = append(serverData, server)
+	}
 
-    log.Println("Server configurations parsed successfully")
+	log.Println("Server data extracted successfully")
 
-    // Extract server name and type from each configuration
-    var serverData []struct {
-        Server string `json:"server"`
-        Type   string `json:"type"`
-    }
-    for name, config := range servers {
-        server := struct {
-            Server string `json:"server"`
-            Type   string `json:"type"`
-        }{
-            Server: name,
-            Type:   config["type"],
-        }
-        serverData = append(serverData, server)
-    }
+	// Set the content type to application/json
+	w.Header().Set("Content-Type", "application/json")
 
-    log.Println("Server data extracted successfully")
+	// Encode the server data to JSON and write it to the response writer
+	if err := json.NewEncoder(w).Encode(serverData); err != nil {
+		http.Error(w, "Failed to encode server data", http.StatusInternalServerError)
+		log.Println("Failed to encode server data:", err)
+		return
+	}
 
-    // Set the content type to application/json
-    w.Header().Set("Content-Type", "application/json")
-
-    // Encode the server data to JSON and write it to the response writer
-    if err := json.NewEncoder(w).Encode(serverData); err != nil {
-        http.Error(w, "Failed to encode server data", http.StatusInternalServerError)
-        log.Println("Failed to encode server data:", err)
-        return
-    }
-
-    log.Println("Server data encoded and sent successfully")
+	log.Println("Server data encoded and sent successfully")
 }
 
 func HandleRconVersion(w http.ResponseWriter, r *http.Request) {
@@ -184,7 +165,7 @@ func HandleRconVersion(w http.ResponseWriter, r *http.Request) {
     latestVersion := strings.TrimPrefix(releaseInfo.TagName, "v")
 
     // Get the current version
-    output, err := ExecuteShellCommand(config.CONFIG.CLI_DEFAULT_SERVER, config.COMMANDS.VERSION)
+    output, err := config.ExecuteShellCommand(config.CONFIG.CLI_ROOT, config.COMMANDS.VERSION)
     if err != nil {
         http.Error(w, "Failed to run rcon-cli: "+err.Error(), http.StatusInternalServerError)
         log.Println("Failed to run rcon-cli:", err)
@@ -206,6 +187,75 @@ func HandleRconVersion(w http.ResponseWriter, r *http.Request) {
         LatestVersion:   latestVersion,
         CurrentVersion:  currentVersion,
         UpdateAvailable: updateAvailable,
+    }
+
+    // Set the content type to application/json
+    w.Header().Set("Content-Type", "application/json")
+
+    // Encode the response to JSON and write it to the response writer
+    if err := json.NewEncoder(w).Encode(response); err != nil {
+        http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        log.Println("Failed to encode response:", err)
+        return
+    }
+
+    log.Println("Response encoded and sent successfully")
+}
+
+func HandleRconHealth(w http.ResponseWriter, r *http.Request) {
+    // Extract server name from URL query parameter, default to a default server name if not provided
+    savedData, err := config.ReadSavedDataFromFile()
+	if err != nil {
+		http.Error(w, "Failed to read saved data", http.StatusInternalServerError)
+		return
+	}
+    serverName := savedData.Server
+    if serverName == "" {
+        serverName = config.CONFIG.CLI_DEFAULT_SERVER // Set your default server name here
+    }
+
+    // Get server configuration
+    serverConfig, err := config.GetServer(serverName)
+    if err != nil {
+        http.Error(w, "Failed to get server configuration: "+err.Error(), http.StatusInternalServerError)
+        log.Println("Failed to get server configuration:", err)
+        return
+    }
+
+    // Parse address and port from serverConfig.Address
+    host, portStr, err := net.SplitHostPort(serverConfig.Address)
+    if err != nil {
+        http.Error(w, "Failed to parse address and port: "+err.Error(), http.StatusInternalServerError)
+        log.Println("Failed to parse address and port:", err)
+        return
+    }
+
+    // Convert port string to integer
+    port, err := strconv.Atoi(portStr)
+    if err != nil {
+        http.Error(w, "Failed to convert port to integer: "+err.Error(), http.StatusInternalServerError)
+        log.Println("Failed to convert port to integer:", err)
+        return
+    }
+
+    // Construct TCP address
+    tcpAddress := net.JoinHostPort(host, strconv.Itoa(port))
+
+    // Dial TCP
+    conn, err := net.DialTimeout("tcp", tcpAddress, 3*time.Second) // Adjust timeout as needed
+    if err != nil {
+        log.Println("Failed to connect to server:", err)
+    }
+    defer func() {
+        if conn != nil {
+            conn.Close()
+        }
+    }()
+
+    // Construct the response
+    response := RconHealthResponse{
+        Server:    serverName,
+        Connected: err == nil, // Set Connected based on the success of the connection attempt
     }
 
     // Set the content type to application/json

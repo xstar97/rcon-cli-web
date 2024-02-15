@@ -214,3 +214,20 @@ body {
 .dark-mode #cli-version {
     color: #ccc;
 }
+
+/* Connection status styles */
+#connectionStatus {
+    text-align: center; /* Center the text */
+    margin-top: 10px; /* Add some space between the logs button and the connection status */
+    font-weight: bold; /* Make the text bold */
+}
+
+/* Light mode styles */
+#connectionStatus {
+    color: #333; /* Text color in light mode */
+}
+
+/* Dark mode styles */
+.dark-mode #connectionStatus {
+    color: #fff; /* Text color in dark mode */
+}

@@ -10,12 +10,14 @@ var ROUTES = struct {
     RCON         string
     RCON_SERVERS string
     RCON_VERSION string
+    RCON_HEALTH  string
     LOGS         string
     SAVED        string
 }{
     RCON:         "/rcon",
     RCON_SERVERS: "/rcon/servers",
     RCON_VERSION: "/rcon/version",
+    RCON_HEALTH:  "/rcon/health",
     LOGS:         "/logs/",
     SAVED:        "/saved",
 }

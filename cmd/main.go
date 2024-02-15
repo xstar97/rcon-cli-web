@@ -41,6 +41,7 @@ func main() {
 	rcon := config.ROUTES.RCON
 	rconServers := config.ROUTES.RCON_SERVERS
 	rconVersion := config.ROUTES.RCON_VERSION
+	rconHealth := config.ROUTES.RCON_HEALTH
 	logs := config.ROUTES.LOGS
 	saved := config.ROUTES.SAVED
 
@@ -48,6 +49,7 @@ func main() {
 	http.HandleFunc(rcon, routes.HandleRcon)
 	http.HandleFunc(rconServers, routes.HandleRconServers)
 	http.HandleFunc(rconVersion, routes.HandleRconVersion)
+	http.HandleFunc(rconHealth, routes.HandleRconHealth)
 	http.HandleFunc(logs, routes.HandleLogs)
 	http.HandleFunc(saved, routes.HandleSaved)
 
