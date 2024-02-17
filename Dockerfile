@@ -11,18 +11,16 @@ RUN mkdir -p /build /output /app
 WORKDIR /build
 
 # Copy all files from the cmd directory
-COPY cmd/public ./public
-COPY cmd/config ./config
-COPY cmd/routes ./routes
-COPY cmd/go.mod ./go.mod
-COPY cmd/go.sum ./go.sum
+COPY go.mod ./go.mod
+COPY go.sum ./go.sum
+COPY internal/config ./internal/config
+COPY internal/routes ./internal/routes
 COPY cmd/main.go ./main.go
 
 # Download dependencies
 RUN go mod download
 
 # Build the Go application
-ARG VERSION=docker
 RUN CGO_ENABLED=1 go build -ldflags "-w -s" -o /output/rcon-cli-web .
 
 # Stage 2 - Create the final image
@@ -65,11 +63,8 @@ RUN chown -R $APP_USER:$APP_GROUP /config
 # Set environment variables
 ENV PORT=3000
 
-# enviromental variable to append flags to CMD
-ENV ARGS=
-
 # Expose the port
 EXPOSE $PORT
 
 # Set the default command to run the binary
-CMD sh -c "./rcon-cli-web --port $PORT $ARGS"
+CMD sh -c "./rcon-cli-web"

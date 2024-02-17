@@ -3,6 +3,7 @@ package config
 import (
     "flag"
     "log"
+    "os"
 )
 
 // Constants for routes
@@ -52,8 +53,29 @@ var CONFIG = struct {
     PUBLIC_DIR string
 }{}
 
+// Function to set configuration from environment variables
+func setConfigFromEnv() {
+    setIfNotEmpty := func(key string, value *string) {
+        if env := os.Getenv(key); env != "" {
+            *value = env
+        }
+    }
+
+    setIfNotEmpty("PORT", &CONFIG.PORT)
+    setIfNotEmpty("MODE", &CONFIG.MODE)
+    setIfNotEmpty("CLI_ROOT", &CONFIG.CLI_ROOT)
+    setIfNotEmpty("CLI_CONFIG", &CONFIG.CLI_CONFIG)
+    setIfNotEmpty("CLI_DEFAULT_SERVER", &CONFIG.CLI_DEFAULT_SERVER)
+    setIfNotEmpty("DB_TYPE", &CONFIG.DB_TYPE)
+    setIfNotEmpty("DB_JSON_FILE", &CONFIG.DB_JSON_FILE)
+    setIfNotEmpty("PUBLIC_DIR", &CONFIG.PUBLIC_DIR)
+}
+
 // Parse flags
 func init() {
+    // Set configuration from environment variables
+    setConfigFromEnv()
+
     flag.StringVar(&CONFIG.PORT, "port", "3000", "Web port")
     flag.StringVar(&CONFIG.MODE, "mode", "dark", "Dark/light mode")
     flag.StringVar(&CONFIG.CLI_ROOT, "cli-root", "/app/rcon/rcon", "Root path to rcon file")

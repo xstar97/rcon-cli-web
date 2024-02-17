@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"rcon-cli-web/config"
+	"rcon-cli-web/internal/config"
 	"strings"
     "log"
     "net"

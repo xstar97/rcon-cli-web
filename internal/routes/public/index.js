@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const toggleModeBtn = document.getElementById("toggleModeBtn");
     const body = document.body;
     const serversSelect = document.getElementById("servers");
+    const viewLogsBtn = document.getElementById("viewLogsBtn");
+    const versionElement = document.getElementById("cli-version");
 
     let currentServer = null;
     let currentMode = null;
@@ -22,14 +24,20 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchServers();
     fetchSavedData();
     fetchVersion();
-    
+    checkConnectionStatus();
+
+    //  initially and every 10 seconds
+    setInterval(checkConnectionStatus, 10000); // 10 seconds interval
+
     // Function to fetch the version from the /rcon/version route
     function fetchVersion() {
         fetch(VERSION_ROUTE)
             .then(response => response.json())
             .then(data => {
-                const versionElement = document.getElementById("cli-version");
                 versionElement.textContent = `cli-version: ${data.currentVersion}`;
+                if(data.updateAvailable == true){
+                versionElement.style.color = "red";
+                }
             })
             .catch(error => console.error("Error fetching version:", error));
     }
@@ -59,11 +67,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error("Error fetching saved data:", error));
     }
     
-    //  initially and every 10 seconds
-    checkConnectionStatus();
-
-    setInterval(checkConnectionStatus, 10000); // 10 seconds interval
-
     // Function to add server options to the select element
     function addServerOption(serverName) {
         const option = document.createElement("option");
@@ -178,8 +181,6 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => console.error('Error updating saved data:', error));
     }
     
-    // Open a new tab to view logs when the "View Logs" button is clicked
-    const viewLogsBtn = document.getElementById("viewLogsBtn");
     viewLogsBtn.addEventListener("click", function() {
         const logsUrl = `${LOGS_ROUTE}/${currentServer}`;
         window.open(logsUrl, '_blank');

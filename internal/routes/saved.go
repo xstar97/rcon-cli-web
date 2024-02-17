@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"rcon-cli-web/config"
+	"rcon-cli-web/internal/config"
 )
 
 // HandleGetSavedData handles GET requests to retrieve saved data

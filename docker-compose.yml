@@ -5,8 +5,9 @@ services:
     image: ghcr.io/xstar97/rcon-cli-web:latest
     environment:
       - PORT=3000
-      # set a custom options via flags.
-      # - ARGS=--mode=light
+      - MODE=dark
+      - CLI_DEFAULT_SERVER=default
+      - CLI_CONFIG=/config/rcon.yaml
     ports:
       - "3000:3000"
     volumes:
